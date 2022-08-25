@@ -2,6 +2,8 @@ const { Room } = require('./room');
 const { Item } = require('./item');
 const { Food } = require('./food');
 const { Enemy } = require('./enemy');
+const { Flashlight } = require('./flashlight');
+const { DarkRoom } = require('./darkroom');
 
 class World {
 	static rooms = {};
@@ -36,7 +38,13 @@ class World {
 		// Get name, id and description from room data
 		for (let i = 0; i < roomList.length; i++) {
 			let roomData = roomList[i];
-			let newRoom = new Room(roomData.name, roomData.description);
+			let newRoom;
+
+			if (roomData.isDark) {
+				newRoom = new DarkRoom(roomData.name, roomData.description);
+			} else {
+				newRoom = new Room(roomData.name, roomData.description);
+			}
 
 			World.rooms[roomData.id] = newRoom;
 		}
@@ -61,6 +69,8 @@ class World {
 
 			if (itemData.isFood) {
 				newItem = new Food(itemData.name, itemData.description);
+			} else if (itemData.isFlash) {
+				newItem = new Flashlight(itemData.name, itemData.description);
 			} else {
 				newItem = new Item(itemData.name, itemData.description);
 			}

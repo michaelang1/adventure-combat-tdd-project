@@ -1,6 +1,8 @@
 const { Character } = require('./character');
 const { Enemy } = require('./enemy');
 const { Food } = require('./food');
+const { Flashlight } = require('../class/flashlight.js');
+const { DarkRoom } = require('../class/darkroom.js');
 
 class Player extends Character {
 	constructor(name, startingRoom) {
@@ -13,6 +15,11 @@ class Player extends Character {
 		// If the next room is valid, set the player to be in that room
 		if (nextRoom) {
 			this.currentRoom = nextRoom;
+
+			// if next room is a dark room, reset it to dark upon entry
+			if (nextRoom instanceof DarkRoom) {
+				nextRoom.darkness = true;
+			}
 
 			nextRoom.printRoom(this);
 		} else {
@@ -42,6 +49,36 @@ class Player extends Character {
 		}
 	}
 
+	// add for TDD proj
+	switchFlash() {
+		if (this.currentRoom instanceof DarkRoom !== true) {
+			console.log('you are not in a dark room!');
+		} else {
+			let count = 0;
+			for (let i = 0; i < this.items.length; i++) {
+				let item = this.items[i];
+
+				if (item instanceof Flashlight) {
+					if (this.currentRoom.darkness === true) {
+						this.currentRoom.darkness = false;
+						this.currentRoom.printRoom();
+						console.log(`${item.name} is now turned on!`);
+					} else if (this.currentRoom.darkness === false) {
+						this.currentRoom.darkness = true;
+						this.currentRoom.printRoom();
+					}
+
+					count++;
+					break;
+				}
+			}
+
+			if (count === 0) {
+				console.log("You don't have a flashlight or lamp!");
+			}
+		}
+	}
+
 	dropItem(itemName) {
 		for (let i = 0; i < this.items.length; i++) {
 			let item = this.items[i];
@@ -49,6 +86,16 @@ class Player extends Character {
 				this.currentRoom.items.push(item);
 				this.items.splice(i, 1);
 				i--;
+
+				// turn room dark automatically when dropped
+				if (
+					item instanceof Flashlight &&
+					this.currentRoom instanceof DarkRoom
+				) {
+					this.currentRoom.darkness = true;
+					this.currentRoom.printRoom();
+					console.log(`${item.name} turned off when dropped!`);
+				}
 			}
 		}
 	}

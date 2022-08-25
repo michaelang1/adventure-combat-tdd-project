@@ -21,6 +21,7 @@ function printHelp() {
 	console.log("  Type 'take <item>' to take an item");
 	console.log("  Type 'drop <item>' to drop an item");
 	console.log("  Type 'eat <item>' to eat a food item");
+	console.log("  Type 'fl' to toggle flashlight on or off");
 	console.log("  Type 'n', 's', 'e', 'w' to move");
 	console.log("  Type 'b' to check your health");
 	console.log('');
@@ -70,6 +71,8 @@ function processCommand() {
 		} else if (['n', 's', 'e', 'w'].indexOf(cmd) >= 0) {
 			let direction = cmd;
 			player.move(direction);
+		} else if (cmd === 'fl') {
+			player.switchFlash();
 		} else if (cmd.startsWith('take ')) {
 			let itemName = cmd.split(' ')[1];
 

@@ -1,5 +1,6 @@
 const { Character } = require('./character');
 const { Food } = require('./food');
+const { DarkRoom } = require('./darkroom');
 
 class Enemy extends Character {
 	constructor(name, description, startingRoom) {
@@ -33,9 +34,13 @@ class Enemy extends Character {
 					this.currentRoom.items.splice(i, 1);
 					i--;
 					this.health = 100;
-					console.log(
-						`${this.name} took the ${item.name}! Its health resets to 100!`
-					);
+
+					if (!this.player.currentRoom.darkness) {
+						console.log(
+							`${this.name} took the ${item.name}! Its health resets to 100!`
+						);
+					}
+
 					this.cooldown += 1000;
 				}
 			}
@@ -58,7 +63,7 @@ class Enemy extends Character {
 			this.attackTarget.currentRoom === this.currentRoom
 		) {
 			this.attackTarget.applyDamage(this.strength);
-			console.log(
+			this.alert(
 				`Ouch! You were hit by ${this.name} (${this.attackTarget.health} / 100)!`
 			);
 		}
@@ -66,7 +71,9 @@ class Enemy extends Character {
 	}
 
 	scratchNose() {
-		this.alert(`${this.name} scratches its nose`);
+		if (!this.player.currentRoom.darkness) {
+			this.alert(`${this.name} scratches its nose`);
+		}
 		this.cooldown += 1000;
 	}
 
